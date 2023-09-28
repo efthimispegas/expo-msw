@@ -3,14 +3,19 @@
 To give support on using [MSW](https://mswjs.io/) within Expo app(s) (managed/bare) 👀.
 
 ## About
-Currently, has one main screen in which it shows a list of random users, with possibility to [refresh](https://reactnative.dev/docs/refreshcontrol). 
+Currently, has one main screen in which it shows a list of random users, with possibility to [refresh](https://reactnative.dev/docs/refreshcontrol) also showcasing an example of native [shimmering effect](https://mui.com/material-ui/react-skeleton/), designed based on the Material UI Skeleton component, utilizing the [Animation API](https://reactnative.dev/docs/animated) of React Native and [`expo-linear-gradient`](https://docs.expo.dev/versions/latest/sdk/linear-gradient/) package for displaying the animation.
 
 👉 We can bring it into another dimension, like to become a useful package for Expo projects 😉.
 ## Demo (Android)
 
 <details>
-  <summary>Press here to expand 👈</summary>
-<img src="./screenshot/expo-msw-demo-1.gif"/>
+  <summary>Press here to expand MSW demo 👈</summary>
+<img src="./screenshot/expo-msw-demo.gif" width="250"/>
+</details>
+
+<details>
+  <summary>Press here to expand Shimmer effect demo 👈</summary>
+<img src="./screenshot/expo-shimmer-demo.gif" width="250"/>
 </details>
 
 ## Usage
