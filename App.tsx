@@ -8,12 +8,17 @@ import {
   Image
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { API_BASE_URL } from "./src/default";
-import { shuffleList } from "./src/utils";
 import "react-native-url-polyfill/auto";
+import { shuffleList } from "./src/utils";
 import server from "./src/devServer";
+import Shimmer from "./src/Shimmer";
 
-server.listen({onUnhandledRequest:"bypass"});
+if(process.env.EXPO_PUBLIC_MSW === 'true') {
+  server.listen({onUnhandledRequest:"bypass"});
+  console.log('==================================');
+  console.log('======== Running with MSW ========');
+  console.log('==================================');
+}
 
 type User = {
   name: {
@@ -35,7 +40,7 @@ export default function App() {
   const [users, setUsers] = React.useState([]);
 
   React.useEffect(() => {
-    fetch(`${API_BASE_URL}?take=8`)
+    fetch(`${process.env.EXPO_PUBLIC_BASE_URL}?take=8`)
         .then(data => data.json())
         .then((res) => {
           setUsers(res.results);
@@ -43,17 +48,19 @@ export default function App() {
   }, []);
 
   const onRefresh = React.useCallback(() => {
-    
+
     setRefreshing(true);
-    
-    fetch(`${API_BASE_URL}?take=8`)
+
+    fetch(`${process.env.EXPO_PUBLIC_BASE_URL}?take=8`)
         .then(data => data.json())
         .then((res) => {
-          
+
           const shuffled: [] = shuffleList(res.results);
-          
+
           setUsers(shuffled);
-          setRefreshing(false);
+          setTimeout(() => {
+            setRefreshing(false);
+          }, 2000);
         });
   }, []);
 
@@ -67,10 +74,20 @@ export default function App() {
             }
         >
           {users.map((user: User) => (
+              refreshing ? (
+              <View key={user.login.uuid} style={styles.skeleton}>
+                <View style={styles.avatar}>
+                  <Shimmer width={50} height={50} />
+                </View>
+                <View style={styles.userCardRight}>
+                  <Shimmer width={200} height={14} />
+                  <Shimmer width={150} height={11} />
+                </View>
+              </View>) : (
               <View key={user.login.uuid} style={styles.userCard}>
                 <Image
-                    style={styles.userImage}
-                    source={{uri: user.picture?.large}}
+                style={styles.userImage}
+                source={{uri: user.picture?.large}}
                 />
                 <View style={styles.userCardRight}>
                   <Text style={{fontSize: 18, fontWeight: '500', color: '#fff'}}>
@@ -78,7 +95,7 @@ export default function App() {
                   </Text>
                   <Text style={{color: '#fff'}}>{`${user?.phone}`}</Text>
                 </View>
-              </View>
+              </View>)
           ))}
         </ScrollView>
       </View>
@@ -90,9 +107,26 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingTop: "10%",
   },
+  avatar: {
+    borderRadius: 30,
+    width: 40,
+    height: 40,
+    overflow: 'hidden',
+  },
   userCard: {
     justifyContent:"space-between",
-    backgroundColor: '#1ec4d3',
+    backgroundColor: 'lightblue',
+    paddingVertical: 6,
+    paddingHorizontal: 6,
+    borderRadius: 10,
+    marginTop: 10,
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  skeleton: {
+    justifyContent:"space-between",
+    backgroundColor: 'lightgrey',
     paddingVertical: 6,
     paddingHorizontal: 6,
     borderRadius: 10,
